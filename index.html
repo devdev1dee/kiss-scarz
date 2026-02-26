@@ -1,40 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Healing Simon</title>
+    <meta charset="UTF-8">
+    <title>Healing Simon - Mockup</title>
     <style>
-        body { text-align: center; background: #1a1a1a; color: white; font-family: sans-serif; }
-        #game-container { margin-top: 50px; }
-        img { width: 300px; border-radius: 10px; cursor: pointer; transition: transform 0.2s; }
-        img:active { transform: scale(1.1); }
+        body {
+            background-color: #121212;
+            color: #ddd;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Simon's Face Mockup (CSS Drawing) */
+        #simon-character {
+            width: 200px;
+            height: 200px;
+            background: #444; /* Hoodie color */
+            border-radius: 50% 50% 10% 10%;
+            position: relative;
+            border: 4px solid #222;
+            transition: all 0.5s;
+        }
+
+        #face {
+            width: 120px;
+            height: 140px;
+            background: #e0ac69; /* Skin tone */
+            border-radius: 50%;
+            position: absolute;
+            top: 30px; left: 40px;
+            overflow: hidden;
+        }
+
+        #mouth {
+            width: 40px;
+            height: 10px;
+            border-top: 3px solid #000;
+            position: absolute;
+            bottom: 30px; left: 40px;
+            border-radius: 50%;
+            transition: 0.5s;
+        }
+
+        #tears {
+            position: absolute;
+            top: 65px; left: 35px;
+            font-size: 20px;
+            animation: drip 2s infinite;
+        }
+
+        /* The Wrist Area */
+        #wrist {
+            width: 100px;
+            height: 180px;
+            background: #e0ac69;
+            margin-top: 30px;
+            border-radius: 10px;
+            position: relative;
+            cursor: crosshair;
+            border: 2px solid #555;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .scar {
+            width: 60%;
+            height: 2px;
+            background: rgba(255, 0, 0, 0.6);
+            margin: 15px auto;
+            transform: rotate(-5deg);
+        }
+
+        /* Animations */
+        @keyframes drip {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(20px); opacity: 0; }
+        }
+
+        .heart {
+            position: absolute;
+            color: red;
+            font-size: 30px;
+            pointer-events: none;
+            animation: fly 1s ease-out forwards;
+        }
+
+        @keyframes fly {
+            to { transform: translateY(-100px); opacity: 0; }
+        }
+
+        .happy-glow {
+            box-shadow: 0 0 50px #ffeb3b;
+            background: #666 !important;
+        }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <h2 id="status">Simon is crying...</h2>
-        <img id="simon-image" src="simon_sad.png" onclick="heal()">
-        <p>Clicks to happiness: <span id="count">10</span></p>
+    <h2 id="status">Simon is in pain...</h2>
+
+    <div id="simon-character">
+        <div id="face">
+            <div id="tears">💧</div>
+            <div style="position:absolute; top:50px; left:30px;">◕</div>
+            <div style="position:absolute; top:50px; right:30px;">◕</div>
+            <div id="mouth"></div>
+        </div>
     </div>
 
-    <script>
-        let clicks = 10;
-        const statusText = document.getElementById('status');
-        const countText = document.getElementById('count');
-        const simonImg = document.getElementById('simon-image');
+    <div id="wrist" onclick="kiss(event)">
+        <div class="scar"></div>
+        <div class="scar"></div>
+        <div class="scar"></div>
+        <div style="position:absolute; bottom:5px; width:100%; text-align:center; font-size:10px;">KISS HERE</div>
+    </div>
 
-        function heal() {
-            if (clicks > 0) {
-                clicks--;
-                countText.innerText = clicks;
-                
-                if (clicks <= 5 && clicks > 0) {
-                    statusText.innerText = "He's starting to stop crying...";
-                    simonImg.src = "simon_neutral.png"; // Change image
-                } else if (clicks === 0) {
-                    statusText.innerText = "Simon is finally happy!";
-                    simonImg.src = "simon_happy.png"; // Final image
-                    simonImg.style.boxShadow = "0 0 20px yellow";
+    <p>HAPPINESS: <span id="percent">0</span>%</p>
+
+    <script>
+        let score = 0;
+        const mouth = document.getElementById('mouth');
+        const tears = document.getElementById('tears');
+        const status = document.getElementById('status');
+        const character = document.getElementById('simon-character');
+
+        function kiss(e) {
+            if (score < 100) {
+                score += 10;
+                document.getElementById('percent').innerText = score;
+
+                // Create floating heart
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '💋';
+                heart.style.left = e.pageX + 'px';
+                heart.style.top = e.pageY + 'px';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 1000);
+
+                // Update Simon's Face
+                if (score >= 30) {
+                    tears.style.display = 'none';
+                    status.innerText = "He's calming down...";
+                }
+                if (score >= 60) {
+                    mouth.style.borderTop = "none";
+                    mouth.style.borderBottom = "3px solid #000";
+                    mouth.style.bottom = "25px";
+                    status.innerText = "He's starting to smile!";
+                }
+                if (score >= 100) {
+                    status.innerText = "Simon is happy because of you.";
+                    character.classList.add('happy-glow');
                 }
             }
         }
