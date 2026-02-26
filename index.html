@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Healing Simon</title>
+    <style>
+        body { text-align: center; background: #1a1a1a; color: white; font-family: sans-serif; }
+        #game-container { margin-top: 50px; }
+        img { width: 300px; border-radius: 10px; cursor: pointer; transition: transform 0.2s; }
+        img:active { transform: scale(1.1); }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h2 id="status">Simon is crying...</h2>
+        <img id="simon-image" src="simon_sad.png" onclick="heal()">
+        <p>Clicks to happiness: <span id="count">10</span></p>
+    </div>
+
+    <script>
+        let clicks = 10;
+        const statusText = document.getElementById('status');
+        const countText = document.getElementById('count');
+        const simonImg = document.getElementById('simon-image');
+
+        function heal() {
+            if (clicks > 0) {
+                clicks--;
+                countText.innerText = clicks;
+                
+                if (clicks <= 5 && clicks > 0) {
+                    statusText.innerText = "He's starting to stop crying...";
+                    simonImg.src = "simon_neutral.png"; // Change image
+                } else if (clicks === 0) {
+                    statusText.innerText = "Simon is finally happy!";
+                    simonImg.src = "simon_happy.png"; // Final image
+                    simonImg.style.boxShadow = "0 0 20px yellow";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
